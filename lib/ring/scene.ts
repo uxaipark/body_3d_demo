@@ -4,7 +4,7 @@ import {mergeVertices} from 'three/addons/utils/BufferGeometryUtils.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {readQualityPreference,resolveQuality,qualitySettings,type QualityChoice} from '../render-quality';
 export class RingScene{
- scene=new T.Scene();root=new T.Group();camera=new T.PerspectiveCamera(36,1,.001,3);renderer:T.WebGLRenderer;controls:OrbitControls;observer:ResizeObserver;frame=0;disposed=false;skin?:T.Mesh;ring=new T.Group();center=new T.Vector3(.164,.025,.025);qualityTier=resolveQuality(readQualityPreference());last=0;moving=false;opacity=1;abort=new AbortController();
+ scene=new T.Scene();root=new T.Group();camera=new T.PerspectiveCamera(36,1,.001,3);renderer:T.WebGLRenderer;controls:OrbitControls;observer:ResizeObserver;frame=0;disposed=false;skin?:T.Mesh;ring=new T.Group();center=new T.Vector3(.164,.025,.025);qualityTier=resolveQuality(readQualityPreference());last=0;height=0;following=.5;moving=false;opacity=1;abort=new AbortController();
  constructor(private host:HTMLElement){
  this.renderer=new T.WebGLRenderer({antialias:this.qualityTier!=='low',alpha:true});this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=.9;this.renderer.setClearColor(0x0d1419,1);this.renderer.setPixelRatio(Math.min(devicePixelRatio,qualitySettings[this.qualityTier].dpr));host.appendChild(this.renderer.domElement);
  this.scene.add(this.root);this.root.add(this.ring);this.scene.add(new T.HemisphereLight(0xd8f2ff,0x3c3028,2));for(const pos of [[.1,.5,.3],[-.2,.1,-.4]]){const l=new T.DirectionalLight(0xffffff,2);l.position.set(...pos as [number,number,number]);this.scene.add(l)}
@@ -35,7 +35,8 @@ export class RingScene{
  setSkin(value:number){this.opacity=value;this.root.traverse(o=>{if(o instanceof T.Mesh&&o.userData.layer&&o.userData.layer!=='skin')o.visible=value<.98});if(this.skin){const m=this.skin.material as T.MeshStandardMaterial;m.transparent=value<1;m.opacity=value;m.depthWrite=value>=.98;}}
  setContact(value:boolean){this.ring.visible=value}
  setQuality(choice:QualityChoice){this.qualityTier=resolveQuality(choice);this.renderer.setPixelRatio(Math.min(devicePixelRatio,qualitySettings[this.qualityTier].dpr))}
- focus(close:boolean){this.controls.target.copy(close?this.center:new T.Vector3(.077,.01,0));this.camera.position.copy(this.controls.target).add(close?new T.Vector3(.04,.055,.07):new T.Vector3(.12,.33,.34));this.controls.update()}
+ setHeight(cm:number){const next=cm/100,delta=next-this.height;this.height=next;this.root.position.y=next;this.controls.target.y+=delta*this.following;this.camera.position.y+=delta*this.following;}
+ focus(close:boolean){this.following=close?1:.5;this.controls.target.copy(close?this.center:new T.Vector3(.077,.01,0));this.camera.position.copy(this.controls.target).add(close?new T.Vector3(.04,.055,.07):new T.Vector3(.12,.33,.34));this.controls.target.y+=this.height;this.camera.position.y+=this.height;this.controls.update()}
  draw=(now:number)=>{if(this.disposed)return;this.frame=requestAnimationFrame(this.draw);if(document.hidden||now-this.last<1000/(this.qualityTier==='low'?24:40))return;this.last=now;this.root.rotation.x=this.moving?Math.sin(now*.002)*.08:0;this.controls.update();this.renderer.render(this.scene,this.camera)};
  release(root:T.Object3D){root.traverse(o=>{if(o instanceof T.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())}})}
  dispose(){this.disposed=true;this.abort.abort();cancelAnimationFrame(this.frame);this.observer.disconnect();this.controls.dispose();this.release(this.root);this.renderer.dispose();this.renderer.domElement.remove()}
