@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {readQualityPreference,resolveQuality,qualitySettings,type QualityChoice} from '../render-quality';
 export class RingScene{
- scene=new T.Scene();root=new T.Group();camera=new T.PerspectiveCamera(36,1,.001,3);renderer:T.WebGLRenderer;controls:OrbitControls;observer:ResizeObserver;frame=0;disposed=false;skin?:T.Mesh;ring=new T.Group();center=new T.Vector3(.164,.025,.025);qualityTier=resolveQuality(readQualityPreference());last=0;height=0;following=.5;moving=false;opacity=.14;abort=new AbortController();
+ scene=new T.Scene();root=new T.Group();camera=new T.PerspectiveCamera(36,1,.001,3);renderer:T.WebGLRenderer;controls:OrbitControls;observer:ResizeObserver;frame=0;disposed=false;skin?:T.Mesh;ring=new T.Group();center=new T.Vector3(.164,.025,.025);qualityTier=resolveQuality(readQualityPreference());last=0;height=0;following=.5;moving=false;opacity=.06;abort=new AbortController();
  constructor(private host:HTMLElement){
  this.renderer=new T.WebGLRenderer({antialias:this.qualityTier!=='low',alpha:true});this.renderer.toneMapping=T.ACESFilmicToneMapping;this.renderer.toneMappingExposure=.9;this.renderer.setClearColor(0x0d1419,1);this.renderer.setPixelRatio(Math.min(devicePixelRatio,qualitySettings[this.qualityTier].dpr));host.appendChild(this.renderer.domElement);
  this.scene.add(this.root);this.root.add(this.ring);this.scene.add(new T.HemisphereLight(0xd8f2ff,0x3c3028,2));for(const pos of [[.1,.5,.3],[-.2,.1,-.4]]){const l=new T.DirectionalLight(0xffffff,2);l.position.set(...pos as [number,number,number]);this.scene.add(l)}
@@ -48,7 +48,7 @@ export class RingScene{
  this.ring.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(u,v,axis));
  this.setSkin(this.opacity);
  }
- setSkin(value:number){this.opacity=value;this.root.traverse(o=>{if(!(o instanceof T.Mesh)||!o.userData.layer)return;const layer=o.userData.layer,m=o.material as T.MeshStandardMaterial;o.visible=layer==='skin'||value<.98;m.opacity=layer==='skin'?value:layer==='adipose'?.12:layer==='muscular'?.8:1;m.transparent=true;m.depthWrite=m.opacity>.94;});}
+ setSkin(value:number){this.opacity=value;this.root.traverse(o=>{if(!(o instanceof T.Mesh)||!o.userData.layer)return;const layer=o.userData.layer,m=o.material as T.MeshStandardMaterial;o.visible=layer==='skin'||value<.98;m.opacity=layer==='skin'?value:layer==='cardiovascular'?1:layer==='skeleton'?.18:layer==='muscular'?.08:layer==='nervous'?0:layer==='adipose'?.03:.1;m.transparent=true;m.depthWrite=m.opacity>.94;});}
  setContact(value:boolean){this.ring.visible=value}
  setQuality(choice:QualityChoice){this.qualityTier=resolveQuality(choice);this.renderer.setPixelRatio(Math.min(devicePixelRatio,qualitySettings[this.qualityTier].dpr))}
  setHeight(cm:number){const next=cm/100,delta=next-this.height;this.height=next;this.root.position.y=next;this.controls.target.y+=delta*this.following;this.camera.position.y+=delta*this.following;}

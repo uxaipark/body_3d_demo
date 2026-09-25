@@ -9,7 +9,7 @@ import {defaults} from '../physiology';
 export class Avatar {
  ready:Promise<void>;view:AnatomyScene;posture='standing';orbit={theta:.3,phi:1.4};lastOrbit='';lastTime=0;
  constructor(public container:HTMLDivElement){
-  this.view=new AnatomyScene(container,{...defaults},{skin:14,dermis:0,adipose:0,skeleton:90,muscular:60,cardiovascular:100,nervous:55,visceral:70},{stats:()=>{},pick:()=>{},time:()=>{},site:()=>{},skin:()=>{}});
+  this.view=new AnatomyScene(container,{...defaults},{skin:6,dermis:0,adipose:0,skeleton:18,muscular:8,cardiovascular:100,nervous:0,visceral:10},{stats:()=>{},pick:()=>{},time:()=>{},site:()=>{},skin:()=>{}});
   cancelAnimationFrame(this.view.frame);this.view.controls.minDistance=.15;this.view.setComfortMode(true);
   const label=document.createElement('div');label.className='soma-load';label.textContent=translateUI('SOMA 해부학 메시 불러오는 중…');container.appendChild(label);
   this.ready=this.view.load(n=>{label.textContent=translateUI(`전신 해부학 ${n}%`);}).then(()=>{label.remove();}).catch((e)=>{label.textContent=translateUI('해부학 모델을 불러오지 못했습니다. 새로고침해 주세요.');throw e;});
