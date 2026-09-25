@@ -1,10 +1,11 @@
 import * as T from 'three';
+import {createSensorRing} from '../ring/hardware';
 import {Avatar} from './original-avatar';
 import {PostureController} from './kinematics.js';
 import type {QualityChoice} from '../render-quality';
 export class PatientScene{
- avatar:Avatar;posture=new PostureController();ready=false;ring:T.Mesh;previousHeight:number|null=null;contact=true;
- constructor(host:HTMLDivElement){this.avatar=new Avatar(host);this.posture.setArmIdleIntensity(0);this.posture.setBodyIdleIntensity(0);this.ring=new T.Mesh(new T.TorusGeometry(.009,.0017,12,48),new T.MeshStandardMaterial({color:0x6b9390,metalness:.7,roughness:.3}));this.avatar.view.root.add(this.ring)}
+ avatar:Avatar;posture=new PostureController();ready=false;ring:T.Group;previousHeight:number|null=null;contact=true;
+ constructor(host:HTMLDivElement){this.avatar=new Avatar(host);this.posture.setArmIdleIntensity(0);this.posture.setBodyIdleIntensity(0);this.ring=createSensorRing(.009);this.avatar.view.root.add(this.ring)}
  async load(){await this.avatar.ready;this.ready=true;}
  get qualityTier(){return this.avatar.view.qualityTier}
  setQuality(c:QualityChoice){this.avatar.view.setQuality(c)}

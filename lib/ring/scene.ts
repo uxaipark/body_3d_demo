@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {createSensorRing} from './hardware';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {readQualityPreference,resolveQuality,qualitySettings,type QualityChoice} from '../render-quality';
@@ -30,15 +31,22 @@ export class RingScene{
  fat.material.onBeforeCompile=shader=>{shader.vertexShader='varying float wristAlong;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nwristAlong=position.x;');shader.fragmentShader='varying float wristAlong;\n'+shader.fragmentShader;shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif(wristAlong>.065)discard;');};this.root.add(fat);
  const box=new T.Box3().setFromObject(bone);box.getCenter(this.center);this.center.x-=.007;this.center.y-=.004;
  const axis=new T.Vector3(1,.53,.4).normalize(),u=new T.Vector3().crossVectors(axis,new T.Vector3(0,1,0)).normalize(),v=new T.Vector3().crossVectors(axis,u).normalize();
- const ray=new T.Raycaster(),positions:number[]=[],indices:number[]=[],segments=80,slices=4;
- // Fit each ring slice to the actual skin intersection, not a floating torus.
- for(let k=0;k<=slices;k++)for(let i=0;i<=segments;i++){
- const theta=i/segments*Math.PI*2,dir=u.clone().multiplyScalar(Math.cos(theta)).addScaledVector(v,Math.sin(theta)),origin=this.center.clone().addScaledVector(axis,(k/slices-.5)*.008);
- ray.set(origin,dir);const hits=ray.intersectObject(this.skin,false);const radius=Math.max(.005,Math.min(.016,hits[0]?.distance??.010))+.0012;
- positions.push(...origin.addScaledVector(dir,radius).toArray());if(k<slices&&i<segments){const a=k*(segments+1)+i,b=a+segments+1;indices.push(a,b,a+1,b,b+1,a+1)}
+ // A rigid smooth enclosure sized from the skin, rather than a deforming surface sheet.
+ const ray=new T.Raycaster();
+ const distance=(origin:T.Vector3,dir:T.Vector3)=>{ray.set(origin,dir);return Math.max(.004,Math.min(.016,ray.intersectObject(this.skin!,false)[0]?.distance??.009));};
+ // Centre the bore on the skin envelope, not the asymmetrically positioned phalanx.
+ for(let pass=0;pass<2;pass++)for(const dir of [u,v]){
+ const positive=distance(this.center,dir),negative=distance(this.center,dir.clone().negate());
+ this.center.addScaledVector(dir,(positive-negative)/2);
  }
- const geometry=new T.BufferGeometry().setAttribute('position',new T.Float32BufferAttribute(positions,3)).setIndex(indices);geometry.computeVertexNormals();this.ring.add(new T.Mesh(geometry,new T.MeshStandardMaterial({color:0x526467,metalness:.8,roughness:.25,side:T.DoubleSide})));
- const mark=new T.Mesh(new T.SphereGeometry(.002,16,12),new T.MeshStandardMaterial({color:0x66ebc0,emissive:0x1f8e65,emissiveIntensity:1}));mark.position.copy(this.center).addScaledVector(v,.0125);this.ring.add(mark);this.setSkin(this.opacity);
+ const radii=[u,v].map(dir=>{let radius=.004;for(let k=-1;k<=1;k++){
+ const origin=this.center.clone().addScaledVector(axis,k*.0035);
+ radius=Math.max(radius,distance(origin,dir),distance(origin,dir.clone().negate()));
+ }return radius+.0003;});
+ const hardware=createSensorRing(.010);hardware.scale.set(radii[0]/.010,radii[1]/.010,1);this.ring.add(hardware);
+ this.ring.position.copy(this.center);
+ this.ring.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(u,v,axis));
+ this.setSkin(this.opacity);
  }
  setSkin(value:number){this.opacity=value;this.root.traverse(o=>{if(!(o instanceof T.Mesh)||!o.userData.layer)return;const layer=o.userData.layer,m=o.material as T.MeshStandardMaterial;o.visible=layer==='skin'||value<.98;m.opacity=layer==='skin'?value:layer==='adipose'?.12:layer==='muscular'?.8:1;m.transparent=true;m.depthWrite=m.opacity>.94;});}
  setContact(value:boolean){this.ring.visible=value}
