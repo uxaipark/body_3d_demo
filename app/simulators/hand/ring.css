@@ -7,3 +7,15 @@
 @media(min-width:1250px){.ring-layout{grid-template-columns:.85fr 1fr 1fr}.patient-view{height:500px}}.patient-card .ring-view{position:relative}.patient-card .soma-load{position:absolute;top:12px;left:12px;font-size:12px}.patient-card .ring-controls{align-items:flex-start}
 
 .ring-layout+.ring-pressure{margin-top:16px}.patient-view{min-height:440px}
+
+/* Stable control slots: actions above, full-width opacity below. */
+.ring-anatomy-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:stretch}
+.ring-reset-view{grid-column:1;grid-row:1;min-height:42px;white-space:normal;line-height:1.4}
+.ring-contact-switch{grid-column:2;grid-row:1;display:grid;grid-template-columns:minmax(0,1fr) 28px 3ch;gap:7px;align-items:center;text-align:left;min-height:42px;line-height:1.4}
+.ring-switch-status{font-variant-numeric:tabular-nums;text-align:center;font-size:10px}
+.ring-switch-track{width:28px;height:16px;border-radius:20px;background:var(--soma-border);position:relative}
+.ring-switch-track i{position:absolute;left:3px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--soma-muted);transition:transform .15s}
+.ring-contact-switch[aria-checked=true] .ring-switch-track{background:var(--soma-accent)}
+.ring-contact-switch[aria-checked=true] .ring-switch-track i{transform:translateX(12px);background:var(--soma-surface)}
+.ring-anatomy-controls .ring-skin-control{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:minmax(0,auto) minmax(60px,1fr) 4ch;gap:10px;min-height:28px}
+.ring-skin-control input{width:100%;margin:0}.ring-skin-control output{text-align:right;font-variant-numeric:tabular-nums}
