@@ -17,14 +17,14 @@ try{
  const delay=ms=>new Promise(r=>setTimeout(r,ms));
  await send('Network.setCookie',{name:'soma_language',value:process.env.SOMA_LANGUAGE||'ko',url:process.env.SOMA_TEST_URL||'http://localhost:3011',path:'/'});
  await mkdir('outputs/design',{recursive:true});
- for(const width of [1440,390])for(const [name,route]of [['home','/'],['body','/simulators/body'],['sleep','/simulators/sleep']]){
+ for(const width of [1440,390])for(const [name,route]of [['home','/'],['body','/simulators/body'],['sleep','/simulators/sleep'],['ring','/simulators/ring']]){
   await send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});
   await send('Page.navigate',{url:(process.env.SOMA_TEST_URL||'http://localhost:3011')+route});
   for(let i=0;i<100;i++){if(await evaluate(`!!document.querySelector('[data-site-header] .render-quality-control select')?._dd`))break;await delay(100);if(i===99)throw Error('UI timeout '+route)}
-  await evaluate('document.fonts.ready');await delay(1000);
+  await evaluate('document.fonts.ready');await delay(1000);if(name==='ring'){for(let i=0;i<100;i++){if(!await evaluate(`!!document.querySelector('.ring-loading')`))break;await delay(100);if(i===99)throw Error('Ring anatomy load failed')}}
   const state=await evaluate(`({width:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,title:document.querySelector('h1')?.textContent,headingColor:getComputedStyle(document.querySelector('h1')||document.body).color})`);
   if(state.scroll>width+1)throw Error('Page overflow '+route+' '+width+' '+JSON.stringify(state));
-  const shot=await send('Page.captureScreenshot',{format:'png'});await writeFile('outputs/design/'+name+'-'+width+'-'+(process.env.SOMA_LANGUAGE||'ko')+'.png',Buffer.from(shot.data,'base64'));console.log(JSON.stringify({name,width,...state}));
+  const shot=await send('Page.captureScreenshot',{format:'png'});await writeFile('outputs/design/'+name+'-'+width+'-'+(process.env.SOMA_LANGUAGE||'ko')+'.png',Buffer.from(shot.data,'base64'));console.log(JSON.stringify({name,width,...state}));if(name==='ring'){await evaluate(`document.querySelector('.ring-controls>button').click()`);await delay(150);if(!await evaluate(`document.querySelector('.ring-metrics strong').textContent.includes('—')`))throw Error('Off-finger gating failed');await evaluate(`document.querySelector('.ring-controls>button').click();document.querySelector('.ring-inputs button').click()`);await delay(150);if(!await evaluate(`document.querySelector('.ring-metrics strong').textContent.includes('—')`))throw Error('Artifact gating failed');}
  }
 
  for(const route of ['/simulators/wrist','/simulators/radial/index.html','/research','/manual','/documents/manual/body','/manual/wrist.md','/research/hand-wrist/README.md']){const r=await fetch((process.env.SOMA_TEST_URL||'http://localhost:3011')+route);if(r.status!==404)throw Error('Excluded route returned '+r.status+': '+route);}

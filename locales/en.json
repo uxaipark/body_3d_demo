@@ -402,5 +402,14 @@
   "수면 실험 열기": "Open sleep experiment",
   "재즈 댄스": "Jazz dance",
   "혈관": "Blood vessels",
-  "혈관 표시": "Show blood vessels"
+  "혈관 표시": "Show blood vessels",
+  "링 수면 센싱": "Ring Sleep Sensing",
+  "검지에 착용하는 광학 센싱 링": "Optical sensing ring on the index finger",
+  "해부학 손 모델에 링을 착용하고 광학 신호와 움직임을 탐색합니다.": "Fit a ring to the anatomical hand and explore optical signals and motion.",
+  "검지 링 · 해부학 레이어": "Index-finger ring · Anatomical layers",
+  "Red / IR PPG · SpO₂ 합성 기준값": "Red / IR PPG · Synthetic SpO₂ reference",
+  "3축 가속도 · 움직임 아티팩트": "3-axis acceleration · Motion artifacts",
+  "링 착용 전환 · CSV": "Ring contact · CSV export",
+  "공개용 합성 신호 데모": "Public synthetic-signal demo",
+  "링 센싱 열기": "Open ring sensing"
 }
