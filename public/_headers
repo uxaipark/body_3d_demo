@@ -1,0 +1,6 @@
+/models/body/*.bin.gz
+  Cache-Control: public, max-age=31536000, immutable
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+/models/body/manifest.json
+  Cache-Control: public, max-age=0, must-revalidate
