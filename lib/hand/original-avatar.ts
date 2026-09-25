@@ -7,7 +7,7 @@ import {AnatomyScene} from '../anatomy';
 import {defaults} from '../physiology';
 /** Adapter to the original CBP simulator interface. Reuses SOMA meshes and rig. */
 export class Avatar {
- ready:Promise<void>;view:AnatomyScene;posture='standing';orbit={theta:.3,phi:1.4};lastOrbit='';lastTime=0;
+ pulseEmphasis=false;ready:Promise<void>;view:AnatomyScene;posture='standing';orbit={theta:.3,phi:1.4};lastOrbit='';lastTime=0;
  constructor(public container:HTMLDivElement){
   this.view=new AnatomyScene(container,{...defaults},{skin:6,dermis:0,adipose:0,skeleton:18,muscular:8,cardiovascular:100,nervous:0,visceral:10},{stats:()=>{},pick:()=>{},time:()=>{},site:()=>{},skin:()=>{}});
   cancelAnimationFrame(this.view.frame);this.view.controls.minDistance=.15;this.view.setComfortMode(true);
@@ -35,7 +35,7 @@ export class Avatar {
   r.bones[0].updateMatrixWorld(true);r.updatePalette();v.skinRig.copyPose(r);
   if(v.followBed&&this.posture==='lying'){bedViewPoint(r.bone('pelvis'),r.bone('chest'),v.bedViewCurrent);followBedView(v.camera,v.controls.target,v.bedViewAnchor,v.bedViewCurrent);}
   v.chair.visible=this.posture==='sitting';v.bedGroup.visible=this.posture==='lying';
-  v.uniforms.uBeat.value=pulse?.heart||0;v.uniforms.uCardiacCycles.value=(state?.t||0)*(state?.instantHR||72)/60;v.uniforms.uPulseGain.value=1;
+  v.uniforms.uBeat.value=pulse?.heart||0;v.uniforms.uCardiacCycles.value=(state?.t||0)*(state?.instantHR||72)/60;v.uniforms.uPulseGain.value=this.pulseEmphasis?10:1;
   const orbit=JSON.stringify(this.orbit);if(orbit!==this.lastOrbit){const target=v.controls.target,dist=v.camera.position.distanceTo(target);v.camera.position.set(target.x+dist*Math.sin(this.orbit.phi)*Math.sin(this.orbit.theta),target.y+dist*Math.cos(this.orbit.phi),target.z+dist*Math.sin(this.orbit.phi)*Math.cos(this.orbit.theta));this.lastOrbit=orbit;}
   updateDeformedBounds(r.bones,v.bodyBounds);v.renderExternal(performance.now(),dt>0);
  }

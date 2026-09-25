@@ -9,8 +9,9 @@ export class PatientScene{
  async load(){await this.avatar.ready;this.ready=true;}
  get qualityTier(){return this.avatar.view.qualityTier}
  setQuality(c:QualityChoice){this.avatar.view.setQuality(c)}
- step(dt:number,t:number,c:{posture:string;arm:string;hr:number;rr:number;contact:boolean}){
+ step(dt:number,t:number,c:{posture:string;arm:string;hr:number;rr:number;contact:boolean;pulseEmphasis?:boolean}){
  if(!this.ready)return null;
+ this.avatar.pulseEmphasis=!!c.pulseEmphasis;
  if(this.avatar.posture!==c.posture){this.avatar.setBodyPosture(c.posture);this.posture.setBodyPosture(c.posture);this.previousHeight=null;}
  if(this.posture.armPosition!==c.arm)this.posture.setArmPosition(c.arm);
  this.posture.update(dt);
