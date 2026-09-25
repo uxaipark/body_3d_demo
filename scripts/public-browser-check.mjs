@@ -17,7 +17,7 @@ try{
  const delay=ms=>new Promise(r=>setTimeout(r,ms));
  await send('Network.setCookie',{name:'soma_language',value:process.env.SOMA_LANGUAGE||'ko',url:process.env.SOMA_TEST_URL||'http://localhost:3011',path:'/'});
  await mkdir('outputs/design',{recursive:true});
- for(const width of [1440,390])for(const [name,route]of [['home','/'],['body','/simulators/body'],['sleep','/simulators/sleep'],['ring','/simulators/ring']]){
+ for(const width of [1440,390])for(const [name,route]of [['home','/'],['body','/simulators/body'],['sleep','/simulators/sleep'],['ring','/simulators/hand']]){
   await send('Emulation.setDeviceMetricsOverride',{width,height:1000,deviceScaleFactor:1,mobile:false});
   await send('Page.navigate',{url:(process.env.SOMA_TEST_URL||'http://localhost:3011')+route});
   for(let i=0;i<100;i++){if(await evaluate(`!!document.querySelector('[data-site-header] .render-quality-control select')?._dd`))break;await delay(100);if(i===99)throw Error('UI timeout '+route)}

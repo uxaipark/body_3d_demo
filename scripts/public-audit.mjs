@@ -7,4 +7,4 @@ for(const root of ['app','lib','locales','public'])for(const file of readdirSync
  if(!/\.(tsx?|js|json|html|md)$/.test(file))continue;
  const path=`${root}/${file}`;assert.equal(blocked.test(readFileSync(path,'utf8')),false,`Private reference: ${path}`);
 }
-console.log('Public edition audit passed: whole-body, sleep and optical ring; private patch pipeline excluded.');
+console.log('Public edition audit passed: whole-body, sleep and hand sensing; private patch pipeline excluded.');

@@ -411,5 +411,7 @@
   "3축 가속도 · 움직임 아티팩트": "3-axis acceleration · Motion artifacts",
   "링 착용 전환 · CSV": "Ring contact · CSV export",
   "공개용 합성 신호 데모": "Public synthetic-signal demo",
-  "링 센싱 열기": "Open ring sensing"
+  "링 센싱 열기": "Open ring sensing",
+  "손 센싱": "Hand Sensing",
+  "서기·앉기·걷기 자세와 손가락 링의 광학 신호·국소 혈압 변화를 함께 탐색합니다.": "Explore standing, sitting and walking alongside finger-ring optics and local pressure."
 }

@@ -3,3 +3,7 @@
 .ring-pressure{margin-bottom:16px}.ring-pressure>.ring-metrics{padding:16px 16px 0;margin:0}.ring-pressure>.ring-metrics article{border:0;padding:8px}.ring-pressure .ring-trace{max-width:900px}.ring-pressure a{color:var(--soma-accent)}
 
 .ring-position-readout{position:absolute;top:12px;left:12px;z-index:1;background:#141e25df;border:1px solid var(--soma-border);border-radius:6px;padding:8px 10px;color:var(--soma-accent);font-size:12px;pointer-events:none}
+
+@media(min-width:1250px){.ring-layout{grid-template-columns:.85fr 1fr 1fr}.patient-view{height:500px}}.patient-card .ring-view{position:relative}.patient-card .soma-load{position:absolute;top:12px;left:12px;font-size:12px}.patient-card .ring-controls{align-items:flex-start}
+
+.ring-layout+.ring-pressure{margin-top:16px}.patient-view{min-height:440px}
