@@ -413,5 +413,8 @@
   "공개용 합성 신호 데모": "Public synthetic-signal demo",
   "링 센싱 열기": "Open ring sensing",
   "손 센싱": "Hand Sensing",
-  "서기·앉기·걷기 자세와 손가락 링의 광학 신호·국소 혈압 변화를 함께 탐색합니다.": "Explore standing, sitting and walking alongside finger-ring optics and local pressure."
+  "서기·앉기·걷기 자세와 손가락 링의 광학 신호·국소 혈압 변화를 함께 탐색합니다.": "Explore standing, sitting and walking alongside finger-ring optics and local pressure.",
+  "침대에 누운 해부학 모델의 흉곽과 명치 CAP 센서 패치": "Anatomical thorax on a bed with an epigastric CAP sensor patch",
+  "명치 CAP 1채널 · 폐 역학 · 합성 신호": "Single-channel CAP · lung mechanics · synthetic signals",
+  "근육·힘줄·혈관이 보이는 해부학 손과 검지의 광학 센싱 링": "Anatomical hand showing muscles, tendons and vessels with an optical ring on the index finger"
 }
